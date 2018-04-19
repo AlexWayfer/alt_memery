@@ -116,6 +116,18 @@ a.users {}
 
 However, this solution is kind of hacky.
 
+One more difference is that you can get real source of method:
+
+```ruby
+require "method_source"
+
+memoize def users
+  get_users
+end
+
+method(:users).super_method.source
+```
+
 ## License
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
 

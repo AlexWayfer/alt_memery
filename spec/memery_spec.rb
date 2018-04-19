@@ -132,4 +132,17 @@ RSpec.describe Memery do
       expect(CALLS).to eq([:m])
     end
   end
+
+  context "source of method" do
+    specify do
+      expect(a.method(:m).super_method.source).to eq(
+        # TODO: Replace with `<<~` when Ruby 2.3 will be minimal version
+        <<-SOURCE.gsub(/^\s+\|/, "")
+        |  memoize def m
+        |    m_private
+        |  end
+        SOURCE
+      )
+    end
+  end
 end

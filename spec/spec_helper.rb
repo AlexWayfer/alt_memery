@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "bundler/setup"
+require "method_source"
 require "simplecov"
 require "coveralls"
 
