@@ -77,6 +77,10 @@ module M
   memoize def m_private; end
 end
 
+module N
+  define_method :m, M.instance_method(:m)
+end
+
 class C
   include M
 end
@@ -107,6 +111,10 @@ class F
   include Memery
 
   def m; end
+end
+
+class G
+  include N
 end
 
 RSpec.describe Memery do
@@ -185,6 +193,16 @@ RSpec.describe Memery do
     end
   end
 
+  context "define unbound method" do
+    subject(:g) { G.new }
+
+    specify do
+      values = [g.m, g.m, g.m]
+      expect(values).to eq([:m, :m, :m])
+      expect(CALLS).to eq([:m])
+    end
+  end
+
   context "class method with args" do
     subject(:d) { D }
 
@@ -204,7 +222,9 @@ RSpec.describe Memery do
     end
 
     specify do
-      expect { klass }.to raise_error(ArgumentError, /Method foo is not defined/)
+      expect { klass }.to raise_error(
+        NameError, /undefined method `foo' for class `#<Class:0x\w+>'/
+      )
     end
   end
 

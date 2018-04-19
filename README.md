@@ -191,7 +191,7 @@ a.memoized?(:execute) # => false
 ```
 
 ## Difference with other gems
-Memery is very similar to [Memoist](https://github.com/matthewrudy/memoist). The difference is that it doesn't override methods, instead it uses Ruby 2 `Module.prepend` feature. This approach is cleaner (for example you are able to inspect the original method body using `method(:x).super_method.source`) and it allows subclasses' methods to work properly: if you redefine a memoized method in a subclass, it's not memoized by default, but you can memoize it normally (without using awkward `identifier: ` argument) and it will just work:
+Memery is very similar to [Memoist](https://github.com/matthewrudy/memoist). The difference is that it doesn't create additional prefixed methods, instead it uses `UnboundMethod` as local variable. This approach is cleaner (for example you are able to inspect the original method body using `method(:x).super_method.source`) and it allows subclasses' methods to work properly: if you redefine a memoized method in a subclass, it's not memoized by default, but you can memoize it normally (without using awkward `identifier: ` argument) and it will just work:
 
 ```ruby
 class A

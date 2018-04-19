@@ -26,52 +26,40 @@ module Memery
   end
 
   module ClassMethods
+    def memoized_methods
+      @memoized_methods ||= {}
+    end
+
     def memoize(method_name, condition: nil, ttl: nil)
-      prepend_memery_module!
-      define_memoized_method!(method_name, condition: condition, ttl: ttl)
+      visibility = Memery.method_visibility(self, method_name)
+      memoized_methods[method_name] =
+        original_method = instance_method(method_name)
+
+      remove_method method_name
+
+      define_method(method_name) do |*args, &block|
+        if block || (condition && !instance_exec(&condition))
+          return original_method.bind(self).call(*args, &block)
+        end
+
+        key = "#{method_name}_#{original_method.object_id}"
+
+        store = (@_memery_memoized_values ||= {})[key] ||= {}
+
+        if store.key?(args) && (ttl.nil? || Memery.monotonic_clock <= store[args][:time] + ttl)
+          return store[args][:result]
+        end
+
+        result = original_method.bind(self).call(*args)
+        @_memery_memoized_values[key][args] = { result: result, time: Memery.monotonic_clock }
+        result
+      end
+
+      send(visibility, method_name)
     end
 
     def memoized?(method_name)
-      return false unless defined?(@_memery_module)
-
-      @_memery_module.method_defined?(method_name) ||
-        @_memery_module.private_method_defined?(method_name)
-    end
-
-    private
-
-    def prepend_memery_module!
-      return if defined?(@_memery_module)
-      @_memery_module = Module.new
-      prepend @_memery_module
-    end
-
-    def define_memoized_method!(method_name, condition: nil, ttl: nil)
-      mod_id = @_memery_module.object_id
-      visibility = Memery.method_visibility(self, method_name)
-      raise ArgumentError, "Method #{method_name} is not defined on #{self}" unless visibility
-
-      @_memery_module.module_eval do
-        define_method(method_name) do |*args, &block|
-          if block || (condition && !instance_exec(&condition))
-            return super(*args, &block)
-          end
-
-          key = "#{method_name}_#{mod_id}"
-
-          store = (@_memery_memoized_values ||= {})[key] ||= {}
-
-          if store.key?(args) && (ttl.nil? || Memery.monotonic_clock <= store[args][:time] + ttl)
-            return store[args][:result]
-          end
-
-          result = super(*args)
-          @_memery_memoized_values[key][args] = { result: result, time: Memery.monotonic_clock }
-          result
-        end
-
-        send(visibility, method_name)
-      end
+      memoized_methods.key?(method_name)
     end
   end
 
