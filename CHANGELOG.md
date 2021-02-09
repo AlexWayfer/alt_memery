@@ -2,6 +2,14 @@
 
 ## master (unreleased)
 
+## 2.1.0 (2021-02-10)
+
+*   Support Ruby 3.
+*   Fix error of `#clear_memery_cache!` with specific methods and without existing cache.
+*   Improve specs.
+*   Update development dependencies.
+*   Update documentation.
+
 ## 2.0.0 (2020-07-09)
 
 *   Rename gem.
