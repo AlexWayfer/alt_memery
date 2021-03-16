@@ -33,37 +33,14 @@ module Memery
       @memoized_methods ||= {}
     end
 
-    ## TODO: Resolve this
-    # rubocop:disable Metrics/MethodLength
-    # rubocop:disable Metrics/AbcSize
-    # rubocop:disable Metrics/CyclomaticComplexity
-    # rubocop:disable Metrics/PerceivedComplexity
     def memoize(method_name, condition: nil, ttl: nil)
       original_visibility = Memery.method_visibility(self, method_name)
 
-      original_method = memoized_methods[method_name] = instance_method(method_name)
+      memoized_methods[method_name] = instance_method(method_name)
 
       undef_method method_name
 
-      define_method method_name do |*args, &block|
-        if block || (condition && !instance_exec(&condition))
-          return original_method.bind(self).call(*args, &block)
-        end
-
-        method_object_id = original_method.object_id
-
-        store =
-          ((@_memery_memoized_values ||= {})[method_name] ||= {})[method_object_id] ||= {}
-
-        if store.key?(args) && (ttl.nil? || Memery.monotonic_clock <= store[args][:time] + ttl)
-          return store[args][:result]
-        end
-
-        result = original_method.bind(self).call(*args)
-        @_memery_memoized_values[method_name][method_object_id][args] =
-          { result: result, time: Memery.monotonic_clock }
-        result
-      end
+      define_memoized_method method_name, condition: condition, ttl: ttl
 
       ruby2_keywords method_name
 
@@ -71,13 +48,27 @@ module Memery
 
       method_name
     end
-    # rubocop:enable Metrics/MethodLength
-    # rubocop:enable Metrics/AbcSize
-    # rubocop:enable Metrics/CyclomaticComplexity
-    # rubocop:enable Metrics/PerceivedComplexity
 
     def memoized?(method_name)
       memoized_methods.key?(method_name)
+    end
+
+    private
+
+    def define_memoized_method(method_name, condition:, ttl:)
+      original_method = memoized_methods[method_name]
+
+      define_method method_name do |*args, &block|
+        if block || (condition && !instance_exec(&condition))
+          return original_method.bind(self).call(*args, &block)
+        end
+
+        store = memery_store method_name
+
+        return store[args][:result] if memoized_result_actual?(store, args, ttl: ttl)
+
+        call_original_and_memoize original_method, args, store
+      end
     end
   end
 
@@ -89,5 +80,21 @@ module Memery
     else
       @_memery_memoized_values.clear
     end
+  end
+
+  private
+
+  def memery_store(method_name)
+    ((@_memery_memoized_values ||= {})[method_name] ||= {})[self.class] ||= {}
+  end
+
+  def memoized_result_actual?(store, args, ttl:)
+    store.key?(args) && (ttl.nil? || Memery.monotonic_clock <= store[args][:time] + ttl)
+  end
+
+  def call_original_and_memoize(original_method, args, store)
+    result = original_method.bind(self).call(*args)
+    store[args] = { result: result, time: Memery.monotonic_clock }
+    result
   end
 end
