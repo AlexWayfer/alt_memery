@@ -37,7 +37,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'module_methods', '~> 0.1.0'
   spec.add_runtime_dependency 'ruby2_keywords', '~> 0.0.2'
 
-  spec.add_development_dependency 'activesupport', '~> 6.0'
+  spec.add_development_dependency 'activesupport', '~> 7.0'
   spec.add_development_dependency 'pry-byebug', '~> 3.9'
 
   spec.add_development_dependency 'benchmark-ips', '~> 2.0'
