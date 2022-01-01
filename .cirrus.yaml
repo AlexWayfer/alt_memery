@@ -54,6 +54,7 @@ test_task:
     matrix:
       image: ruby:2.7
       image: ruby:3.0
+      image: ruby:3.1
   <<: *bundle_cache
   test_script: bundle exec rspec
   only_if: ($CIRRUS_BRANCH == 'master') ||
