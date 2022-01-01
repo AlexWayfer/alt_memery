@@ -13,8 +13,21 @@ Gem::Specification.new do |spec|
     Alt Memery is a gem for memoization.
     It's a fork of Memery with implementation via `UnboundMethod` instead of `prepend Module`.
   TEXT
-  spec.homepage      = 'https://github.com/AlexWayfer/alt_memery'
-  spec.license       = 'MIT'
+
+  spec.license = 'MIT'
+
+  github_uri = 'https://github.com/AlexWayfer/alt_memery'
+
+  spec.homepage = github_uri
+
+  spec.metadata = {
+    'bug_tracker_uri' => "#{github_uri}/issues",
+    'changelog_uri' => "#{github_uri}/blob/v#{spec.version}/CHANGELOG.md",
+    'documentation_uri' => "http://www.rubydoc.info/gems/#{spec.name}/#{spec.version}",
+    'homepage_uri' => spec.homepage,
+    'rubygems_mfa_required' => 'true',
+    'source_code_uri' => github_uri
+  }
 
   spec.files         = Dir['lib/**/*.rb', 'README.md', 'LICENSE.txt', 'CHANGELOG.md']
   spec.require_paths = ['lib']
