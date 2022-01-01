@@ -60,7 +60,7 @@ module Memery
 
       define_method method_name do |*args, &block|
         if block || (condition && !instance_exec(&condition))
-          return original_method.bind(self).call(*args, &block)
+          return original_method.bind_call(self, *args, &block)
         end
 
         store = memery_store method_name
@@ -93,7 +93,7 @@ module Memery
   end
 
   def call_original_and_memoize(original_method, args, store)
-    result = original_method.bind(self).call(*args)
+    result = original_method.bind_call(self, *args)
     store[args] = { result: result, time: Memery.monotonic_clock }
     result
   end
