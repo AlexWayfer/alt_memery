@@ -639,7 +639,7 @@ RSpec.describe Memery do
         let(:values) do
           result = [test_object.memoized_method, test_object.memoized_method]
           test_object.clear_memery_cache!
-          result.concat [test_object.memoized_method, test_object.memoized_method]
+          result.push test_object.memoized_method, test_object.memoized_method
         end
 
         let(:expected_values) { [42, 42, 42, 42] }
