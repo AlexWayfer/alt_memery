@@ -6,19 +6,24 @@ bundle_cache: &bundle_cache
       - ruby -v
       - cat Gemfile
       - cat *.gemspec
+
   install_script: bundle update
 
 remark_task:
   container:
     image: node
+
   node_modules_cache:
     folder: node_modules
     fingerprint_script:
       - echo $CIRRUS_OS
       - node -v
       - cat package.json
+
   install_script: npm install
+
   lint_script: npm run remark
+
   only_if: ($CIRRUS_BRANCH == 'master') ||
     changesInclude(
       '.cirrus.yaml', '.gitignore', 'package.json', '.remarkrc.yaml', '**.md'
@@ -27,8 +32,11 @@ remark_task:
 bundle-audit_task:
   container:
     image: ruby
+
   <<: *bundle_cache
+
   bundle-audit_script: bundle audit check --update
+
   only_if: ($CIRRUS_BRANCH == 'master') ||
     changesInclude(
       '.cirrus.yaml', '.gitignore', 'Gemfile', '*.gemspec'
@@ -37,8 +45,11 @@ bundle-audit_task:
 rubocop_task:
   container:
     image: ruby
+
   <<: *bundle_cache
+
   rubocop_script: bundle exec rubocop
+
   only_if: ($CIRRUS_BRANCH == 'master') ||
     changesInclude(
       '.cirrus.yaml', '.gitignore', 'Gemfile', 'Rakefile', '.rubocop.yml', '*.gemspec',
@@ -50,13 +61,17 @@ test_task:
     - remark
     - bundle-audit
     - rubocop
+
   container:
     matrix:
       image: ruby:2.7
       image: ruby:3.0
       image: ruby:3.1
+
   <<: *bundle_cache
+
   test_script: bundle exec rspec
+
   only_if: ($CIRRUS_BRANCH == 'master') ||
     changesInclude(
       '.cirrus.yaml', '.gitignore', 'Gemfile', 'Rakefile', '.rspec', '*.gemspec', 'lib/**',
