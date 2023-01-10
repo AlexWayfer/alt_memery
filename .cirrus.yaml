@@ -72,6 +72,17 @@ test_task:
 
   test_script: bundle exec rspec
 
+  codecov_uploader_cache:
+    folder: codecov
+    fingerprint_script:
+      - curl --no-progress-meter https://uploader.codecov.io/latest/linux/codecov.SHA256SUM
+    populate_script:
+      - mkdir -p codecov
+      - curl https://uploader.codecov.io/latest/linux/codecov -o codecov/uploader
+      - chmod +x codecov/uploader
+
+  codecov_script: codecov/uploader
+
   only_if: ($CIRRUS_BRANCH == 'master') ||
     changesInclude(
       '.cirrus.yaml', '.gitignore', 'Gemfile', 'Rakefile', '.rspec', '*.gemspec', 'lib/**',

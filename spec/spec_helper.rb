@@ -3,12 +3,13 @@
 require 'pry-byebug'
 
 require 'simplecov'
-SimpleCov.start
 
 if ENV['CI']
-  require 'codecov'
-  SimpleCov.formatter = SimpleCov::Formatter::Codecov
+  require 'simplecov-cobertura'
+  SimpleCov.formatter = SimpleCov::Formatter::CoberturaFormatter
 end
+
+SimpleCov.start
 
 require_relative '../lib/memery'
 require 'active_support/concern'
