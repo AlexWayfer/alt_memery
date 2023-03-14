@@ -71,6 +71,31 @@ RSpec.describe Memery do
     include_examples 'correct values and calls'
   end
 
+  context 'when double memoized' do
+    let(:test_class) do
+      define_base_class do
+        memoize def memoized_method
+          calls << __method__
+          42
+        end
+
+        memoize :memoized_method
+      end
+    end
+
+    let(:values) do
+      [
+        test_object.memoized_method,
+        test_object.memoized_method
+      ]
+    end
+
+    let(:expected_values) { [42, 42] }
+    let(:expected_calls) { %i[memoized_method] }
+
+    include_examples 'correct values and calls'
+  end
+
   context 'when method with args' do
     let(:test_class) do
       define_base_class do
