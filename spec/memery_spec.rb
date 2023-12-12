@@ -316,7 +316,7 @@ RSpec.describe Memery do
       define_base_class(parent_class) do
         memoize def memoized_method(first, second)
           calls << [first, second]
-          super first * 2, second * 2
+          super(first * 2, second * 2)
           :result_from_child_class
         end
       end
