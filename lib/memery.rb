@@ -32,20 +32,22 @@ module Memery
       @memoized_methods ||= {}
     end
 
-    def memoize(method_name, condition: nil, ttl: nil)
-      original_visibility = Memery.method_visibility(self, method_name)
+    def memoize(*method_names, condition: nil, ttl: nil)
+      method_names.each do |method_name|
+        original_visibility = Memery.method_visibility(self, method_name)
 
-      memoized_methods[method_name] = instance_method(method_name)
+        memoized_methods[method_name] = instance_method(method_name)
 
-      undef_method method_name
+        undef_method method_name
 
-      define_memoized_method method_name, condition: condition, ttl: ttl
+        define_memoized_method method_name, condition: condition, ttl: ttl
 
-      ruby2_keywords method_name
+        ruby2_keywords method_name
 
-      send original_visibility, method_name
+        send original_visibility, method_name
+      end
 
-      method_name
+      method_names.size > 1 ? method_names : method_names.first
     end
 
     def memoized?(method_name)

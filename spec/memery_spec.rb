@@ -41,6 +41,32 @@ RSpec.describe Memery do
     end
   end
 
+  describe 'returning value' do
+    subject { test_class.memoize :memoized_method }
+
+    let(:test_class) do
+      define_base_class do
+        def memoized_method
+          calls << __method__
+          42
+        end
+
+        def another_memoized_method
+          calls << __method__
+          8
+        end
+      end
+    end
+
+    it { is_expected.to eq :memoized_method }
+
+    context 'with multiple method names' do
+      subject { test_class.memoize :memoized_method, :another_memoized_method }
+
+      it { is_expected.to eq %i[memoized_method another_memoized_method] }
+    end
+  end
+
   context 'when methods without args' do
     let(:test_class) do
       define_base_class do
@@ -53,6 +79,38 @@ RSpec.describe Memery do
           calls << __method__
           8
         end
+      end
+    end
+
+    let(:values) do
+      [
+        test_object.memoized_method,
+        test_object.another_memoized_method,
+        test_object.memoized_method,
+        test_object.another_memoized_method
+      ]
+    end
+
+    let(:expected_values) { [42, 8, 42, 8] }
+    let(:expected_calls) { %i[memoized_method another_memoized_method] }
+
+    include_examples 'correct values and calls'
+  end
+
+  context 'with multiple method names' do
+    let(:test_class) do
+      define_base_class do
+        def memoized_method
+          calls << __method__
+          42
+        end
+
+        def another_memoized_method
+          calls << __method__
+          8
+        end
+
+        memoize :memoized_method, :another_memoized_method
       end
     end
 
@@ -588,6 +646,56 @@ RSpec.describe Memery do
       let(:expected_calls) { %i[memoized_method another_memoized_method another_memoized_method] }
 
       include_examples 'correct values and calls'
+    end
+
+    context 'with multiple methods in single call' do
+      let(:test_class) do
+        define_base_class do
+          attr_accessor :environment
+
+          def memoized_method
+            calls << __method__
+            42
+          end
+
+          def another_memoized_method
+            calls << __method__
+            8
+          end
+
+          memoize :memoized_method, :another_memoized_method,
+            condition: -> { environment == 'production' }
+        end
+      end
+
+      context 'when returns true' do
+        let(:environment) { 'production' }
+
+        let(:values) do
+          [
+            test_object.memoized_method,
+            test_object.another_memoized_method,
+            test_object.memoized_method,
+            test_object.another_memoized_method
+          ]
+        end
+
+        let(:expected_values) { [42, 8, 42, 8] }
+        let(:expected_calls) { %i[memoized_method another_memoized_method] }
+
+        include_examples 'correct values and calls'
+      end
+
+      context 'when returns false' do
+        let(:environment) { 'development' }
+
+        let(:expected_values) { [42, 8, 42, 8] }
+        let(:expected_calls) do
+          %i[memoized_method another_memoized_method memoized_method another_memoized_method]
+        end
+
+        include_examples 'correct values and calls'
+      end
     end
   end
 
