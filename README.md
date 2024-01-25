@@ -89,6 +89,22 @@ gem install alt_memery
 
 ## Usage
 
+### Requirement
+
+Since it's a fork of `memery` gem, require with:
+
+```ruby
+require 'memery'
+```
+
+Or from the `Gemfile`:
+
+```ruby
+gem 'alt_memery', require: 'memery'
+```
+
+### Code
+
 ```ruby
 class A
   include Memery
