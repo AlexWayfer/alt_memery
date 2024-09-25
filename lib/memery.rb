@@ -66,7 +66,7 @@ module Memery
 
         store = memery_store method_name
 
-        return store[args][:result] if memoized_result_actual?(store, args, ttl: ttl)
+        return store[args.hash][:result] if memoized_result_actual?(store, args, ttl: ttl)
 
         call_original_and_memoize original_method, args, store
       end
@@ -90,12 +90,12 @@ module Memery
   end
 
   def memoized_result_actual?(store, args, ttl:)
-    store.key?(args) && (ttl.nil? || Memery.monotonic_clock <= store[args][:time] + ttl)
+    store.key?(args.hash) && (ttl.nil? || Memery.monotonic_clock <= store[args.hash][:time] + ttl)
   end
 
   def call_original_and_memoize(original_method, args, store)
     result = original_method.bind_call(self, *args)
-    store[args] = { result: result, time: Memery.monotonic_clock }
+    store[args.hash] = { result: result, time: Memery.monotonic_clock }
     result
   end
 end
