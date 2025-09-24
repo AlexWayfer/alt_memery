@@ -5,7 +5,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :development do
-  gem 'activesupport', '~> 7.0'
+  gem 'activesupport', '~> 8.0'
   gem 'pry-byebug', '~> 3.9'
 
   gem 'gem_toys', '~> 0.14.0'
