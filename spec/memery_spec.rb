@@ -23,7 +23,7 @@ RSpec.describe Memery do
 
   let(:test_object) { test_class.new }
 
-  shared_examples 'correct values and calls' do
+  shared_examples 'a correctly memoized object' do
     describe 'values' do
       subject { values }
 
@@ -94,7 +94,7 @@ RSpec.describe Memery do
     let(:expected_values) { [42, 8, 42, 8] }
     let(:expected_calls) { %i[memoized_method another_memoized_method] }
 
-    include_examples 'correct values and calls'
+    it_behaves_like 'a correctly memoized object'
   end
 
   context 'with multiple method names' do
@@ -126,7 +126,7 @@ RSpec.describe Memery do
     let(:expected_values) { [42, 8, 42, 8] }
     let(:expected_calls) { %i[memoized_method another_memoized_method] }
 
-    include_examples 'correct values and calls'
+    it_behaves_like 'a correctly memoized object'
   end
 
   context 'when double memoized' do
@@ -151,7 +151,7 @@ RSpec.describe Memery do
     let(:expected_values) { [42, 42] }
     let(:expected_calls) { %i[memoized_method] }
 
-    include_examples 'correct values and calls'
+    it_behaves_like 'a correctly memoized object'
   end
 
   context 'when method with args' do
@@ -176,7 +176,7 @@ RSpec.describe Memery do
     let(:expected_values) { [[1, 1], [1, 1], [1, 2], [1, 2]] }
     let(:expected_calls) { [[1, 1], [1, 2]] }
 
-    include_examples 'correct values and calls'
+    it_behaves_like 'a correctly memoized object'
 
     context 'when receiving Hash-like object' do
       let(:object_class) do
@@ -201,7 +201,7 @@ RSpec.describe Memery do
       let(:expected_values) { [[1, object], [1, object], [1, 2], [1, 2]] }
       let(:expected_calls) { [[1, object], [1, 2]] }
 
-      include_examples 'correct values and calls'
+      it_behaves_like 'a correctly memoized object'
     end
   end
 
@@ -227,7 +227,7 @@ RSpec.describe Memery do
     let(:expected_values) { [[1, 2], [1, 2], [1, 3], [1, 3]] }
     let(:expected_calls) { [[1, 2], [1, 3]] }
 
-    include_examples 'correct values and calls'
+    it_behaves_like 'a correctly memoized object'
   end
 
   context 'when method with splat argument' do
@@ -252,7 +252,7 @@ RSpec.describe Memery do
     let(:expected_values) { [[1, 1], [1, 1], [1, 2], [1, 2]] }
     let(:expected_calls) { [[1, 1], [1, 2]] }
 
-    include_examples 'correct values and calls'
+    it_behaves_like 'a correctly memoized object'
   end
 
   context 'when method with double splat argument' do
@@ -282,7 +282,7 @@ RSpec.describe Memery do
       [[1, { second: 2 }], [1, { second: 3 }]]
     end
 
-    include_examples 'correct values and calls'
+    it_behaves_like 'a correctly memoized object'
   end
 
   context 'when calling method with a block' do
@@ -307,7 +307,7 @@ RSpec.describe Memery do
     let(:expected_values) { [42, 42, 84, 42] }
     let(:expected_calls) { %i[memoized_method memoized_method] }
 
-    include_examples 'correct values and calls'
+    it_behaves_like 'a correctly memoized object'
   end
 
   context 'when calling private method' do
@@ -400,7 +400,7 @@ RSpec.describe Memery do
 
     let(:expected_calls) { [[1, 1], [1, 2]] }
 
-    include_examples 'correct values and calls'
+    it_behaves_like 'a correctly memoized object'
 
     describe 'parent calls' do
       subject { test_object.parent_calls }
@@ -444,7 +444,7 @@ RSpec.describe Memery do
     let(:expected_values) { [42, 42, 42] }
     let(:expected_calls) { %i[memoized_method] }
 
-    include_examples 'correct values and calls'
+    it_behaves_like 'a correctly memoized object'
 
     context 'when memoization in class' do
       let(:test_class) do
@@ -471,7 +471,7 @@ RSpec.describe Memery do
       let(:expected_values) { [8, 8, 8] }
       let(:expected_calls) { %i[memoized_method_from_class] }
 
-      include_examples 'correct values and calls'
+      it_behaves_like 'a correctly memoized object'
     end
   end
 
@@ -536,7 +536,7 @@ RSpec.describe Memery do
     let(:expected_values) { [[1, 1], [1, 1], [1, 2], [1, 2]] }
     let(:expected_calls) { [[1, 1], [1, 2]] }
 
-    include_examples 'correct values and calls'
+    it_behaves_like 'a correctly memoized object'
   end
 
   context 'when method does not exist' do
@@ -587,7 +587,7 @@ RSpec.describe Memery do
     let(:expected_values) { [42, 42, 42] }
     let(:expected_calls) { %i[memoized_method] }
 
-    include_examples 'correct values and calls'
+    it_behaves_like 'a correctly memoized object'
   end
 
   describe ':condition option' do
@@ -637,7 +637,7 @@ RSpec.describe Memery do
       let(:expected_values) { [42, 8, 42, 8] }
       let(:expected_calls) { %i[memoized_method another_memoized_method] }
 
-      include_examples 'correct values and calls'
+      it_behaves_like 'a correctly memoized object'
     end
 
     context 'when returns false' do
@@ -646,7 +646,7 @@ RSpec.describe Memery do
       let(:expected_values) { [42, 8, 42, 8] }
       let(:expected_calls) { %i[memoized_method another_memoized_method another_memoized_method] }
 
-      include_examples 'correct values and calls'
+      it_behaves_like 'a correctly memoized object'
     end
 
     context 'with multiple methods in single call' do
@@ -684,7 +684,7 @@ RSpec.describe Memery do
         let(:expected_values) { [42, 8, 42, 8] }
         let(:expected_calls) { %i[memoized_method another_memoized_method] }
 
-        include_examples 'correct values and calls'
+        it_behaves_like 'a correctly memoized object'
       end
 
       context 'when returns false' do
@@ -695,7 +695,7 @@ RSpec.describe Memery do
           %i[memoized_method another_memoized_method memoized_method another_memoized_method]
         end
 
-        include_examples 'correct values and calls'
+        it_behaves_like 'a correctly memoized object'
       end
     end
   end
@@ -726,7 +726,7 @@ RSpec.describe Memery do
     let(:expected_values) { [[1, 1], [1, 1], [1, 2], [1, 2]] }
     let(:expected_calls) { [[1, 1], [1, 2]] }
 
-    include_examples 'correct values and calls'
+    it_behaves_like 'a correctly memoized object'
 
     context 'when ttl has expired' do
       before do
@@ -742,7 +742,7 @@ RSpec.describe Memery do
 
       let(:expected_calls) { [[1, 1], [1, 2], [1, 1], [1, 2]] }
 
-      include_examples 'correct values and calls'
+      it_behaves_like 'a correctly memoized object'
     end
   end
 
@@ -766,7 +766,7 @@ RSpec.describe Memery do
         let(:expected_values) { [42, 42] }
         let(:expected_calls) { %i[memoized_method] }
 
-        include_examples 'correct values and calls'
+        it_behaves_like 'a correctly memoized object'
       end
 
       context 'with cache' do
@@ -779,7 +779,7 @@ RSpec.describe Memery do
         let(:expected_values) { [42, 42, 42, 42] }
         let(:expected_calls) { %i[memoized_method memoized_method] }
 
-        include_examples 'correct values and calls'
+        it_behaves_like 'a correctly memoized object'
       end
     end
 
@@ -841,7 +841,7 @@ RSpec.describe Memery do
           ]
         end
 
-        include_examples 'correct values and calls'
+        it_behaves_like 'a correctly memoized object'
       end
 
       context 'with cache' do
@@ -888,7 +888,7 @@ RSpec.describe Memery do
           ]
         end
 
-        include_examples 'correct values and calls'
+        it_behaves_like 'a correctly memoized object'
       end
     end
   end
@@ -906,7 +906,7 @@ RSpec.describe Memery do
       it { is_expected.to be false }
     end
 
-    shared_examples 'works correctly' do
+    shared_examples 'a memoizable entity' do
       context 'with public memoized method' do
         let(:test_class) do
           send define_entity_method_name do
@@ -969,13 +969,13 @@ RSpec.describe Memery do
     context 'with class' do
       let(:define_entity_method_name) { :define_base_class }
 
-      include_examples 'works correctly'
+      it_behaves_like 'a memoizable entity'
     end
 
     context 'with module' do
       let(:define_entity_method_name) { :define_base_module }
 
-      include_examples 'works correctly'
+      it_behaves_like 'a memoizable entity'
     end
   end
 end
