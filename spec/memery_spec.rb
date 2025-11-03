@@ -566,6 +566,7 @@ RSpec.describe Memery do
         remove_method :calls
 
         extend Forwardable
+
         def_delegators :inner_object, :memoized_method, :calls
 
         define_method :inner_object do
