@@ -10,7 +10,7 @@
 Gemfile.lock
 yarn.lock
 package-lock.json
-.benchmark.rb
+.benchmark*.rb
 
 # rspec failure tracking
 .rspec_status
