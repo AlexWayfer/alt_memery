@@ -3,3 +3,6 @@ plugins:
   - remark-gfm
   - - lint-maximum-line-length
     - 100
+  - - remark-lint-list-item-indent
+    - - warn
+      - tab
