@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require 'pry-byebug'
+## https://github.com/deivid-rodriguez/pry-byebug/issues/460
+# require 'pry-byebug'
 
 require 'simplecov'
 
