@@ -33,11 +33,6 @@ module Memery
     end
 
     def memoize(*method_names, condition: nil, ttl: nil)
-      if method_names.empty?
-        @_memery_memoize_next_method = { condition:, ttl: }
-        return
-      end
-
       method_names.each do |method_name|
         memoize_method(method_name, condition:, ttl:)
       end
@@ -45,22 +40,8 @@ module Memery
       method_names.size > 1 ? method_names : method_names.first
     end
 
-    def unmemoize
-      @_memery_memoize_next_method = nil
-    end
-
     def memoized?(method_name)
       memoized_methods.key?(method_name)
-    end
-
-    def method_added(name)
-      super
-
-      return unless @_memery_memoize_next_method
-
-      return if caller_locations(2, 1)[0].label == 'Memery::ClassMethods#define_memoized_method'
-
-      memoize(name, **@_memery_memoize_next_method)
     end
 
     private
