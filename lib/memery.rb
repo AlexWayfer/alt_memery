@@ -54,7 +54,7 @@ module Memery
 
       return unless @_memery_memoize_next_method
 
-      return if caller_locations(2, 2)[0].label == 'Memery::ClassMethods#define_memoized_method'
+      return if caller_locations(2, 1)[0].label == 'Memery::ClassMethods#define_memoized_method'
 
       memoize(name, **@_memery_memoize_next_method)
       @_memery_memoize_next_method = nil
