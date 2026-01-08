@@ -120,32 +120,6 @@ class A
     puts "calculating"
     42
   end
-
-  ## Alternatively:
-  #
-  # def call
-  #   ...
-  # end
-  # memoize :call
-
-  ## Or you can use `memoize` and `unmemoize` methods without method names
-  ## like `private` and `public` keywords:
-  #
-  # memoize
-  #
-  # def memoized_method
-  #   ...
-  # end
-  #
-  # def another_memoized_method
-  #   ...
-  # end
-  #
-  # unmemoize
-  #
-  # def non_memoized_method
-  #   ...
-  # end
 end
 
 a = A.new
@@ -156,6 +130,58 @@ a.call # => 42
 
 a.call { 1 } # => 42
 # "calculating" will be printed again because passing a block disables memoization.
+```
+
+Alternatively:
+
+```ruby
+class A
+  include Memery
+
+  def call
+    puts "calculating"
+    42
+  end
+  memoize :call
+end
+```
+
+Or you can use `memoize` and `unmemoize` methods without method names
+like `private` and `public` keywords:
+
+```ruby
+class A
+  include Memery
+
+  memoize
+
+  def memoized_method
+    puts "calculating 42"
+    42
+  end
+
+  def another_memoized_method
+    puts "calculating 52"
+    52
+  end
+
+  unmemoize
+
+  def non_memoized_method
+    puts "calculating 8"
+    8
+  end
+end
+
+a = A.new
+a.memoized_method # => 42
+a.memoized_method # => 42
+a.another_memoized_method # => 52
+a.another_memoized_method # => 52
+a.non_memoized_method # => 8
+a.non_memoized_method # => 8
+# "calculating 42" and "calculating 52" will only be printed once,
+# but "calculating 8" will be printed twice
 ```
 
 Methods with arguments are supported and the memoization will be done based on arguments
