@@ -39,17 +39,7 @@ module Memery
       end
 
       method_names.each do |method_name|
-        original_visibility = Memery.method_visibility(self, method_name)
-
-        memoized_methods[method_name] = instance_method(method_name)
-
-        undef_method method_name
-
-        define_memoized_method method_name, condition: condition, ttl: ttl
-
-        ruby2_keywords method_name
-
-        send original_visibility, method_name
+        memoize_method(method_name, condition:, ttl:)
       end
 
       method_names.size > 1 ? method_names : method_names.first
@@ -71,6 +61,20 @@ module Memery
     end
 
     private
+
+    def memoize_method(method_name, condition:, ttl:)
+      original_visibility = Memery.method_visibility(self, method_name)
+
+      memoized_methods[method_name] = instance_method(method_name)
+
+      undef_method method_name
+
+      define_memoized_method(method_name, condition:, ttl:)
+
+      ruby2_keywords method_name
+
+      send original_visibility, method_name
+    end
 
     def define_memoized_method(method_name, condition:, ttl:)
       original_method = memoized_methods[method_name]
