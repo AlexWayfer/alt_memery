@@ -121,11 +121,31 @@ class A
     42
   end
 
-  # Alternatively:
+  ## Alternatively:
+  #
   # def call
   #   ...
   # end
   # memoize :call
+
+  ## Or you can use `memoize` and `unmemoize` methods without method names
+  ## like `private` and `public` keywords:
+  #
+  # memoize
+  #
+  # def memoized_method
+  #   ...
+  # end
+  #
+  # def another_memoized_method
+  #   ...
+  # end
+  #
+  # unmemoize
+  #
+  # def non_memoized_method
+  #   ...
+  # end
 end
 
 a = A.new

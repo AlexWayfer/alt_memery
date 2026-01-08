@@ -139,6 +139,13 @@ RSpec.describe Memery do
           42
         end
 
+        def another_memoized_method
+          calls << __method__
+          52
+        end
+
+        unmemoize
+
         def non_memoized_method
           calls << __method__
           8
@@ -149,14 +156,18 @@ RSpec.describe Memery do
     let(:values) do
       [
         test_object.memoized_method,
+        test_object.another_memoized_method,
         test_object.non_memoized_method,
         test_object.memoized_method,
+        test_object.another_memoized_method,
         test_object.non_memoized_method
       ]
     end
 
-    let(:expected_values) { [42, 8, 42, 8] }
-    let(:expected_calls) { %i[memoized_method non_memoized_method non_memoized_method] }
+    let(:expected_values) { [42, 52, 8, 42, 52, 8] }
+    let(:expected_calls) do
+      %i[memoized_method another_memoized_method non_memoized_method non_memoized_method]
+    end
 
     it_behaves_like 'a correctly memoized object'
   end
