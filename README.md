@@ -64,6 +64,8 @@ So, this fork uses `UnboundMethod` as I've suggested in the PR above.
 
 ## Difference with other gems
 
+### Memoizaion method and ancestors
+
 Such gems like [Memoist](https://github.com/matthewrudy/memoist) override methods.
 So, if you want to memoize a method in a child class with the same named memoized method
 in a parent class — you have to use something like awkward `identifier: ` argument.
@@ -71,9 +73,11 @@ This gem allows you to just memoize methods when you want to.
 
 Note how both method's return values are cached separately and don't interfere with each other.
 
-The other key difference is that it doesn't change method's arguments
-(no extra param like `reload`). If you need to get unmemoize result of method —
-just call the `#clear_memery_cache!` method with needed memoized method names:
+### Memoized method arguments and clearing cache
+
+This gem doesn't change method's arguments (no extra param like `reload`).
+If you need to get unmemoize result of method — just call the `#clear_memery_cache!` method
+with needed memoized method names:
 
 ```ruby
 a.clear_memery_cache! :foo, :bar
@@ -81,9 +85,10 @@ a.clear_memery_cache! :foo, :bar
 
 Without arguments, `#clear_memery_cache!` will clear the whole instance's cache.
 
-Also you could see something like `Memery.use_hashed_arguments` option for Marshal compatibility,
-but this gem doesn't require such options, it works well in different proccesses
-with hashed arguments without performance impact.
+### Marshal compatibility
+
+This gem doesn't require any global options, it works well with marshalized objects
+in different proccesses with hashed arguments without performance impact.
 
 ## Installation
 
