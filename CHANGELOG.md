@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+## 3.0.0 (2026-01-08)
+
+*   Allow to memoize multiple method names.
+*   Performance improvements.
+*   Enshure that marshalizing works correctly.
+*   Add specs for double memoization.
+*   Add Ruby 3.4 and 4.0 support.
+*   Drop Ruby 2.5, 2.6, 2.7, 3.0, 3.1, 3.2 and 3.3 support.
+*   Improve README.
+*   Actualize gem specs metadata.
+*   Add `bundle-audit` CI task.
+*   Improve Cirrus CI config.
+*   Improve RuboCop config.
+*   Resolve new RuboCop offenses.
+*   Lock RuboCop version better.
+*   Update development dependencies.
+
 ## 2.1.0 (2021-02-10)
 
 *   Support Ruby 3.
