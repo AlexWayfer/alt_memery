@@ -28,6 +28,20 @@ def user
 end
 ```
 
+Even worse: if your calculations require multiple lines, you have to use `begin`/`end` block:
+
+```ruby
+def user
+  @user ||= begin
+    some_id = calculate_id
+    klass = calculate_klass
+    klass.find(some_id)
+  end
+end
+```
+
+And there is no elegant escape if your methods accept arguments.
+
 But with memoization gems, like this one, you can simplify your code:
 
 ```ruby
@@ -67,25 +81,13 @@ a.clear_memery_cache! :foo, :bar
 
 Without arguments, `#clear_memery_cache!` will clear the whole instance's cache.
 
+Also you could see something like `Memery.use_hashed_arguments` option for Marshal compatibility,
+but this gem doesn't require such options, it works well in different proccesses
+with hashed arguments without performance impact.
+
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'alt_memery'
-```
-
-And then execute:
-
-```shell
-bundle install
-```
-
-Or install it yourself as:
-
-```shell
-gem install alt_memery
-```
+Add `gem 'alt_memery'` to your Gemfile.
 
 ## Usage
 
@@ -114,7 +116,7 @@ class A
     42
   end
 
-  # or:
+  # Alternatively:
   # def call
   #   ...
   # end
@@ -125,10 +127,10 @@ a = A.new
 a.call # => 42
 a.call # => 42
 a.call # => 42
-# Text will be printed only once.
+# "calculating" will only be printed once.
 
 a.call { 1 } # => 42
-# Will print because passing a block disables memoization
+# "calculating" will be printed again because passing a block disables memoization.
 ```
 
 Methods with arguments are supported and the memoization will be done based on arguments
@@ -148,7 +150,7 @@ a = A.new
 a.call(1, 5) # => 6
 a.call(2, 15) # => 17
 a.call(1, 5) # => 6
-# Text will be printed only twice, once per unique argument list.
+# "calculating" will be printed twice, once for each unique argument list.
 ```
 
 For class methods:
@@ -168,10 +170,10 @@ end
 B.call # => 42
 B.call # => 42
 B.call # => 42
-# Text will be printed only once.
+# "calculating" will only be printed once.
 ```
 
-For conditional memoization:
+### Conditional Memoization
 
 ```ruby
 class A
@@ -206,7 +208,7 @@ a.call # => 42
 # with `true` result of condition block.
 ```
 
-For memoization with time-to-live:
+### Memoization with Time-to-Live (TTL)
 
 ```ruby
 class A
@@ -238,7 +240,7 @@ a.call # => 42
 a.call # => 42
 ```
 
-Check if method is memoized:
+### Checking if a Method is Memoized
 
 ```ruby
 class A
@@ -314,6 +316,14 @@ puts C.instance_method(:foo).super_method.owner.memoized_methods[:foo].source
 #   'source'
 # end
 ```
+
+### Object Shape Optimization
+
+In Ruby 3.2, a new optimization called "object shape" was introduced,
+which can have negative interactions with dynamically added instance variables.
+Alt Memery minimizes this impact by introducing only one new instance variable
+after initialization (`@_memery_memoized_values`). If you need to ensure a specific object shape,
+you can call `clear_memery_cache!` in your initializer to set the instance variable ahead of time.
 
 ## Development
 

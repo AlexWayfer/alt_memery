@@ -33,6 +33,11 @@ module Memery
     end
 
     def memoize(*method_names, condition: nil, ttl: nil)
+      if method_names.empty?
+        @_memery_memoize_next_method = { condition:, ttl: }
+        return
+      end
+
       method_names.each do |method_name|
         original_visibility = Memery.method_visibility(self, method_name)
 
@@ -52,6 +57,17 @@ module Memery
 
     def memoized?(method_name)
       memoized_methods.key?(method_name)
+    end
+
+    def method_added(name)
+      super
+
+      return unless @_memery_memoize_next_method
+
+      return if caller_locations(2, 2)[0].label == 'Memery::ClassMethods#define_memoized_method'
+
+      memoize(name, **@_memery_memoize_next_method)
+      @_memery_memoize_next_method = nil
     end
 
     private

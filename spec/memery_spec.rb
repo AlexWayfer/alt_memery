@@ -129,6 +129,38 @@ RSpec.describe Memery do
     it_behaves_like 'a correctly memoized object'
   end
 
+  context 'without method names' do
+    let(:test_class) do
+      define_base_class do
+        memoize
+
+        def memoized_method
+          calls << __method__
+          42
+        end
+
+        def non_memoized_method
+          calls << __method__
+          8
+        end
+      end
+    end
+
+    let(:values) do
+      [
+        test_object.memoized_method,
+        test_object.non_memoized_method,
+        test_object.memoized_method,
+        test_object.non_memoized_method
+      ]
+    end
+
+    let(:expected_values) { [42, 8, 42, 8] }
+    let(:expected_calls) { %i[memoized_method non_memoized_method non_memoized_method] }
+
+    it_behaves_like 'a correctly memoized object'
+  end
+
   context 'when double memoized' do
     let(:test_class) do
       define_base_class do
