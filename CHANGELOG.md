@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 3.0.1 (2026-02-01)
+
+*   Return Ruby 3.2 and 3.3 support.
+
 ## 3.0.0 (2026-01-08)
 
 *   Allow to memoize multiple method names.
