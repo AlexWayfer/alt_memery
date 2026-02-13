@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 3.0.2 (2026-02-13)
+
+*   Update `module_methods` runtime dependency.
+*   Update `rubocop` development dependency.
+
 ## 3.0.1 (2026-02-01)
 
 *   Return Ruby 3.2 and 3.3 support.
